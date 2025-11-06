@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Rajput-Suraj/pizza-auth-service#readme",
   "devDependencies": {
     "@types/node": "^24.10.0",
+    "prettier": "3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
