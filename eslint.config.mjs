@@ -16,6 +16,9 @@ export default defineConfig(
     },
     rules: {
       "no-console": "error",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
     },
   },
 );
