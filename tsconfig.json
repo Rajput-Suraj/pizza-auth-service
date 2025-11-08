@@ -44,5 +44,5 @@
     "allowImportingTsExtensions": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["eslint.config.mjs", "dist/**"]
+  "exclude": ["eslint.config.mjs", "dist/**", "tests/"]
 }

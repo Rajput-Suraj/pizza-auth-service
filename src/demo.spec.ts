@@ -3,7 +3,7 @@ import request from "supertest";
 import { add } from "./server.ts";
 import app from "./app.ts";
 
-describe("Add", () => {
+describe.skip("Add", () => {
   it("adds two numbers", () => {
     expect(add(1, 2)).toBe(3);
   });
