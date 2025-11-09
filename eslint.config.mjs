@@ -12,6 +12,8 @@ export default defineConfig(
       "eslint.config.mjs",
       "jest.config.mjs",
       "tests/**",
+      "db/**",
+      "drizzle.config.ts",
     ],
   },
   {

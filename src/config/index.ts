@@ -1,8 +1,19 @@
 import "dotenv/config";
 
-const { PORT, NODE_ENV } = process.env;
+const {
+  PORT,
+  NODE_ENV,
+  POSTGRES_DB,
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  DATABASE_URL,
+} = process.env;
 
 export const Config = {
   PORT,
   NODE_ENV,
+  POSTGRES_DB,
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  DATABASE_URL,
 };
