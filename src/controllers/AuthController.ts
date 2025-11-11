@@ -12,10 +12,10 @@ export class AuthController {
 
   async register(req: RegisterUserRequest, res: Response) {
     const { firstName, lastName, email } = req.body;
-
-    await this.userService.create({ firstName, lastName, email });
+    const data = await this.userService.create({ firstName, lastName, email });
 
     res.status(201).json({
+      userId: data?.userId,
       message: "User created successfully",
     });
   }
