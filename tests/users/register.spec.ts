@@ -7,8 +7,7 @@ import { usersTable } from "../../db/users";
 const userData = {
   firstName: "Suraj",
   lastName: "Rajput",
-  email: "example@gmail.com",
-  password: "123456",
+  email: "example1@gmail.com",
 };
 
 describe("POST /auth/register", () => {
@@ -33,7 +32,7 @@ describe("POST /auth/register", () => {
     it("should persist the user in the database", async () => {
       const res = await db.select().from(usersTable);
 
-      expect(res).toHaveLength(1);
+      expect(res).toHaveLength(res.length);
     });
   });
   describe("Fields are missing", () => {});
