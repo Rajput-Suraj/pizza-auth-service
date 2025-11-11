@@ -1,14 +1,21 @@
+import createHttpError from "http-errors";
 import db from "../../db/index.ts";
 import { usersTable } from "../../db/users.ts";
 import type { UserData } from "../types/index.ts";
 
 export class UserService {
   async create({ firstName, lastName, email }: UserData) {
-    const result = await db
-      .insert(usersTable)
-      .values({ firstName, lastName, email })
-      .returning({ userId: usersTable.id });
+    try {
+      const result = await db
+        .insert(usersTable)
+        .values({ firstName, lastName, email })
+        .returning({ userId: usersTable.id });
 
-    return result[0];
+      return result[0];
+    } catch (err) {
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = createHttpError(500, (err as any).cause?.detail);
+      throw error;
+    }
   }
 }

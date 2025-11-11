@@ -6,6 +6,8 @@ const router = express();
 const userService = new UserService();
 const authController = new AuthController(userService);
 
-router.post("/register", (req, res) => authController.register(req, res));
+router.post("/register", (req, res, next) =>
+  authController.register(req, res, next),
+);
 
 export default router;
