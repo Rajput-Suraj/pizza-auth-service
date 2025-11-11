@@ -14,6 +14,7 @@ export default defineConfig(
       "tests/**",
       "db/**",
       "drizzle.config.ts",
+      "drizzle/**",
     ],
   },
   {
