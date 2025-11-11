@@ -7,6 +7,13 @@
       "when": 1762871034391,
       "tag": "0000_melted_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762871258696,
+      "tag": "0001_useful_beast",
+      "breakpoints": true
     }
   ]
 }
