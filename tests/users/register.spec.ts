@@ -1,8 +1,8 @@
 import request from "supertest";
 
 import app from "../../src/app";
-import db from "../../db/index";
-import { usersTable } from "../../db/users";
+import db from "../../src/db/client";
+import { usersTable } from "../../src/db/index";
 
 const userData = {
   firstName: "Suraj",

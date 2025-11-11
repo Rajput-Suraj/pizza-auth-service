@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
-import db from "../../db/index.ts";
-import { usersTable } from "../../db/users.ts";
+import db from "../db/client.ts";
+import { usersTable } from "../db/index.ts";
 import type { UserData } from "../types/index.ts";
 
 export class UserService {
