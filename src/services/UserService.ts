@@ -4,11 +4,11 @@ import { usersTable } from "../db/index.ts";
 import type { UserData } from "../types/index.ts";
 
 export class UserService {
-  async create({ firstName, lastName, email }: UserData) {
+  async create({ firstName, lastName, email, role }: UserData) {
     try {
       const result = await db
         .insert(usersTable)
-        .values({ firstName, lastName, email })
+        .values({ firstName, lastName, email, role })
         .returning({ userId: usersTable.id });
 
       return result[0];
