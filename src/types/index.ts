@@ -4,7 +4,7 @@ export interface UserData {
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role?: string | undefined;
 }
 
 export interface RegisterUserRequest extends Request {

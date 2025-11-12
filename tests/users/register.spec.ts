@@ -2,13 +2,14 @@ import request from "supertest";
 
 import app from "../../src/app";
 import db from "../../src/db/client";
+import { Roles } from "../../src/constants";
 import { usersTable } from "../../src/db/index";
 
 interface UserData {
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role?: string | undefined;
 }
 
 const userData = {
@@ -66,7 +67,7 @@ describe("POST /auth/register", () => {
       const response = await request(app).post("/auth/register").send(userData);
       // Assert
       expect(response.body).toHaveProperty("role");
-      expect(response.body.role).toEqual("customer");
+      expect(response.body.role).toEqual(Roles.CUSTOMER);
     });
   });
   describe("Fields are missing", () => {});

@@ -1,14 +1,20 @@
 import createHttpError from "http-errors";
 import db from "../db/client.ts";
 import { usersTable } from "../db/index.ts";
+import { Roles } from "../constants/index.ts";
 import type { UserData } from "../types/index.ts";
 
 export class UserService {
-  async create({ firstName, lastName, email, role }: UserData) {
+  async create({ firstName, lastName, email }: UserData) {
     try {
       const result = await db
         .insert(usersTable)
-        .values({ firstName, lastName, email, role })
+        .values({
+          firstName,
+          lastName,
+          email,
+          role: Roles.CUSTOMER,
+        })
         .returning({
           userId: usersTable.id,
           role: usersTable.role,
