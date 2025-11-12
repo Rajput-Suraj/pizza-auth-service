@@ -14,6 +14,13 @@
       "when": 1762871258696,
       "tag": "0001_useful_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762958746358,
+      "tag": "0002_flippant_black_cat",
+      "breakpoints": true
     }
   ]
 }
