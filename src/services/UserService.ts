@@ -9,7 +9,10 @@ export class UserService {
       const result = await db
         .insert(usersTable)
         .values({ firstName, lastName, email, role })
-        .returning({ userId: usersTable.id });
+        .returning({
+          userId: usersTable.id,
+          role: usersTable.role,
+        });
 
       return result[0];
     } catch (err) {

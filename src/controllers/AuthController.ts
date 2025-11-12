@@ -22,6 +22,7 @@ export class AuthController {
 
       res.status(201).json({
         userId: data?.userId,
+        role: data?.role,
         message: "User created successfully",
       });
     } catch (err) {

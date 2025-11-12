@@ -4,6 +4,13 @@ import app from "../../src/app";
 import db from "../../src/db/client";
 import { usersTable } from "../../src/db/index";
 
+interface UserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+
 const userData = {
   firstName: "Suraj",
   lastName: "Rajput",
@@ -45,6 +52,21 @@ describe("POST /auth/register", () => {
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("userId");
       expect(typeof response.body.userId).toBe("number");
+    });
+
+    it("should assign a customer role", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Bruce",
+        lastName: "Banner",
+        email: "brucebanner@gmail.com",
+        role: "customer",
+      };
+      // Act
+      const response = await request(app).post("/auth/register").send(userData);
+      // Assert
+      expect(response.body).toHaveProperty("role");
+      expect(response.body.role).toEqual("customer");
     });
   });
   describe("Fields are missing", () => {});
