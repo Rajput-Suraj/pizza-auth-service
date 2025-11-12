@@ -5,7 +5,7 @@ import { Roles } from "../constants/index.ts";
 import type { UserData } from "../types/index.ts";
 
 export class UserService {
-  async create({ firstName, lastName, email }: UserData) {
+  async create({ firstName, lastName, email, password }: UserData) {
     try {
       const result = await db
         .insert(usersTable)
@@ -14,6 +14,7 @@ export class UserService {
           lastName,
           email,
           role: Roles.CUSTOMER,
+          password,
         })
         .returning({
           userId: usersTable.id,

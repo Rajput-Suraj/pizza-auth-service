@@ -10,6 +10,7 @@ interface UserData {
   lastName: string;
   email: string;
   role?: string | undefined;
+  password: string;
 }
 
 const userData = {
@@ -68,6 +69,22 @@ describe("POST /auth/register", () => {
       // Assert
       expect(response.body).toHaveProperty("role");
       expect(response.body.role).toEqual(Roles.CUSTOMER);
+    });
+
+    it("should store the hashed password in the database", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Steve",
+        lastName: "Rogers",
+        email: "steverogers@gmail.com",
+        role: "customer",
+        password: "captain-america",
+      };
+      // Act
+      await request(app).post("/auth/register").send(userData);
+      // Assert
+      const res = await db.select().from(usersTable);
+      expect(res.at(-1)?.password).not.toBe(usersTable.password);
     });
   });
   describe("Fields are missing", () => {});

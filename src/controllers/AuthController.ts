@@ -11,13 +11,14 @@ export class AuthController {
   }
 
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
-    const { firstName, lastName, email, role } = req.body;
+    const { firstName, lastName, email, role, password } = req.body;
     try {
       const data = await this.userService.create({
         firstName,
         lastName,
         email,
         role,
+        password,
       });
 
       res.status(201).json({
