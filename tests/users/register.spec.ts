@@ -131,4 +131,27 @@ describe("POST /auth/register", () => {
       expect(user).toHaveLength(0);
     });
   });
+
+  describe("Fields are not in proper format", () => {
+    it("should trim the email field", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Natasha",
+        lastName: "Romanoff",
+        email: " natasharomanoff@gmail.com ",
+        role: "customer",
+        password: "black-widow",
+      };
+
+      // Act
+      //Assert
+      const user = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, userData.email.trim()));
+
+      console.log("USEER", user.at(-1));
+      expect(user.at(-1)?.email).toBe("natasharomanoff@gmail.com");
+    });
+  });
 });
