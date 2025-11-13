@@ -130,6 +130,50 @@ describe("POST /auth/register", () => {
         .where(eq(usersTable.firstName, userData.firstName));
       expect(user).toHaveLength(0);
     });
+
+    it("Should return 400 status code if firstName field is missing.", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "",
+        lastName: "Bravo",
+        email: "jhoonybravo@gmail.com",
+        role: "customer",
+        password: "jhoonyBravo@123",
+      };
+
+      // Act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // Assert
+      expect(res.statusCode).toBe(400);
+      const user = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, userData.email));
+      expect(user).toHaveLength(0);
+    });
+
+    it("Should return 400 status code if password field is missing.", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Dexter",
+        lastName: "",
+        email: "dexter@dexlabs.com",
+        role: "customer",
+        password: "",
+      };
+
+      // Act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // Assert
+      expect(res.statusCode).toBe(400);
+      const user = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, userData.email));
+      expect(user).toHaveLength(0);
+    });
   });
 
   describe("Fields are not in proper format", () => {
@@ -150,8 +194,29 @@ describe("POST /auth/register", () => {
         .from(usersTable)
         .where(eq(usersTable.email, userData.email.trim()));
 
-      console.log("USEER", user.at(-1));
       expect(user.at(-1)?.email).toBe("natasharomanoff@gmail.com");
+    });
+
+    //todo: have to work
+    it.skip("should return 400 status code if email is not a valid email.", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Robin",
+        lastName: "",
+        email: "robin",
+        role: "customer",
+        password: "robin",
+      };
+
+      // Act
+      await request(app).post("/auth/register").send(userData);
+      //Assert
+      const user = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.email, userData.email.trim()));
+
+      expect(user.at(-1)?.email).toBe("robin@batcave.com");
     });
   });
 });
