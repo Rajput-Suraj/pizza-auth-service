@@ -90,6 +90,21 @@ describe("POST /auth/register", () => {
       expect(pass).toHaveLength(60);
       expect(pass).toMatch(/^\$2b\$\d+\$/);
     });
+
+    it("should return 400 status code if email is already exists", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Natasha",
+        lastName: "Romanoff",
+        email: "natasharomanoff@gmail.com",
+        role: "customer",
+        password: "black-widow",
+      };
+      // Act
+      const res = await request(app).post("/auth/register").send(userData);
+      // Assert
+      expect(res.statusCode).toBe(400);
+    });
   });
   describe("Fields are missing", () => {});
 });

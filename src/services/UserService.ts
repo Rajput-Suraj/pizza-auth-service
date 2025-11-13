@@ -4,9 +4,20 @@ import db from "../db/client.ts";
 import { usersTable } from "../db/index.ts";
 import { Roles } from "../constants/index.ts";
 import type { UserData } from "../types/index.ts";
+import { eq } from "drizzle-orm";
 
 export class UserService {
   async create({ firstName, lastName, email, password }: UserData) {
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
+
+    if (user) {
+      const err = createHttpError(400, "Email is already exists!");
+      throw err;
+    }
+
     //Hash the password
     const saltRounds = 10;
     const hasedPassword = await bcrypt.hash(password, saltRounds);
