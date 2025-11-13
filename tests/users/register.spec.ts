@@ -63,6 +63,7 @@ describe("POST /auth/register", () => {
         lastName: "Banner",
         email: "brucebanner@gmail.com",
         role: "customer",
+        password: "",
       };
       // Act
       const response = await request(app).post("/auth/register").send(userData);
