@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import createHttpError from "http-errors";
 import db from "../db/client.ts";
 import { usersTable } from "../db/index.ts";
@@ -6,6 +7,9 @@ import type { UserData } from "../types/index.ts";
 
 export class UserService {
   async create({ firstName, lastName, email, password }: UserData) {
+    //Hash the password
+    const saltRounds = 10;
+    const hasedPassword = await bcrypt.hash(password, saltRounds);
     try {
       const result = await db
         .insert(usersTable)
@@ -14,7 +18,7 @@ export class UserService {
           lastName,
           email,
           role: Roles.CUSTOMER,
-          password,
+          password: hasedPassword,
         })
         .returning({
           userId: usersTable.id,

@@ -75,17 +75,20 @@ describe("POST /auth/register", () => {
     it("should store the hashed password in the database", async () => {
       // Arrange
       const userData: UserData = {
-        firstName: "Steve",
-        lastName: "Rogers",
-        email: "steverogers@gmail.com",
+        firstName: "Bruce",
+        lastName: "Wayne",
+        email: "bruce@wayne.com",
         role: "customer",
-        password: "captain-america",
+        password: "batman",
       };
       // Act
       await request(app).post("/auth/register").send(userData);
       // Assert
       const res = await db.select().from(usersTable);
-      expect(res.at(-1)?.password).not.toBe(usersTable.password);
+      const pass = res.at(-1)?.password;
+      expect(pass).not.toBe(usersTable.password);
+      expect(pass).toHaveLength(60);
+      expect(pass).toMatch(/^\$2b\$\d+\$/);
     });
   });
   describe("Fields are missing", () => {});
