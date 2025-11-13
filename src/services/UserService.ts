@@ -1,10 +1,11 @@
 import bcrypt from "bcrypt";
 import createHttpError from "http-errors";
+import { eq } from "drizzle-orm";
+
 import db from "../db/client.ts";
 import { usersTable } from "../db/index.ts";
 import { Roles } from "../constants/index.ts";
 import type { UserData } from "../types/index.ts";
-import { eq } from "drizzle-orm";
 
 export class UserService {
   async create({ firstName, lastName, email, password }: UserData) {

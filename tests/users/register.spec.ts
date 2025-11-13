@@ -1,4 +1,5 @@
 import request from "supertest";
+import { eq } from "drizzle-orm";
 
 import app from "../../src/app";
 import db from "../../src/db/client";
@@ -106,5 +107,28 @@ describe("POST /auth/register", () => {
       expect(res.statusCode).toBe(400);
     });
   });
-  describe("Fields are missing", () => {});
+
+  describe("Fields are missing", () => {
+    it("should return 400 status code if email field is missing", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Clark",
+        lastName: "Kent",
+        email: "",
+        role: "customer",
+        password: "superman",
+      };
+
+      // Act
+      const res = await request(app).post("/auth/register").send(userData);
+
+      // Assert
+      expect(res.statusCode).toBe(400);
+      const user = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.firstName, userData.firstName));
+      expect(user).toHaveLength(0);
+    });
+  });
 });
