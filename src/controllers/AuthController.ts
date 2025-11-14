@@ -1,7 +1,13 @@
-import type { NextFunction, Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
+import jwt from "jsonwebtoken";
+import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
 
+import type { JwtPayload } from "jsonwebtoken";
+import type { NextFunction, Response } from "express";
 import type { RegisterUserRequest } from "../types/index.ts";
+
 import { UserService } from "../services/UserService.ts";
 
 export class AuthController {
@@ -27,6 +33,44 @@ export class AuthController {
         email,
         role,
         password,
+      });
+
+      const payload: JwtPayload = {
+        sub: String(data?.userId),
+        role: data?.role,
+      };
+
+      let privateKey: Buffer;
+      try {
+        privateKey = fs.readFileSync(
+          path.join(__dirname, "../../certs/private.pem"),
+        );
+        //eslint-disable-next-line  @typescript-eslint/no-unused-vars
+      } catch (err) {
+        const error = createHttpError(500, "Error while reading private key");
+        next(error);
+        return;
+      }
+
+      const accessToken = jwt.sign(payload, privateKey, {
+        algorithm: "RS256",
+        expiresIn: "1h",
+        issuer: "auth-service",
+      });
+      const refreshToken = "refreshToken=";
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60, // 1 hour
+        httpOnly: true,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+        httpOnly: true,
       });
 
       res.status(201).json({

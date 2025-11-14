@@ -14,7 +14,7 @@ export class UserService {
       .from(usersTable)
       .where(eq(usersTable.email, email));
 
-    if (user) {
+    if (!user) {
       const err = createHttpError(400, "Email is already exists!");
       throw err;
     }

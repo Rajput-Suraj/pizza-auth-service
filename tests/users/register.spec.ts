@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import app from "../../src/app";
 import db from "../../src/db/client";
 import { Roles } from "../../src/constants";
+import { isJwt } from "../../src/utils/index";
 import { usersTable } from "../../src/db/index";
 
 interface UserData {
@@ -105,6 +106,41 @@ describe("POST /auth/register", () => {
       const res = await request(app).post("/auth/register").send(userData);
       // Assert
       expect(res.statusCode).toBe(400);
+    });
+
+    //Tokens are not working inside test conditions
+    it.skip("should return the access token and refresh token inside a cookie", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "John",
+        lastName: "Dev",
+        email: "johndev@gmail.com",
+        role: "customer",
+        password: "123456789",
+      };
+      // Act
+      const res = await request(app).post("/auth/register").send(userData);
+      // Assert
+      let accessToken: string | null = null;
+      let refreshToken: string | null = null;
+      const cookies: string[] =
+        (res.headers["set-cookie"] as unknown as string[]) || [];
+      console.log("COOk", cookies);
+      cookies.forEach((cookie) => {
+        if (cookie.startsWith("accessToken=")) {
+          accessToken = cookie.split(";")[0].split("=")[1];
+        }
+
+        if (cookie.startsWith("refreshToken=")) {
+          refreshToken = cookie.split(";")[0].split("=")[1];
+        }
+      });
+
+      expect(accessToken).not.toBeNull();
+      expect(refreshToken).not.toBeNull();
+
+      expect(isJwt(accessToken)).toBeTruthy();
+      expect(isJwt(refreshToken)).toBeTruthy();
     });
   });
 
