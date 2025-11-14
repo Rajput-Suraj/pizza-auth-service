@@ -10,11 +10,9 @@ import { TokenService } from "../services/TokenService.ts";
 
 export class AuthController {
   userService: UserService;
+  tokenService: TokenService;
 
-  constructor(
-    userService: UserService,
-    private tokenService: TokenService,
-  ) {
+  constructor(userService: UserService, tokenService: TokenService) {
     this.userService = userService;
     this.tokenService = tokenService;
   }
