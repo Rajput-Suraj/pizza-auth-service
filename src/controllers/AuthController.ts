@@ -8,7 +8,9 @@ import type { JwtPayload } from "jsonwebtoken";
 import type { NextFunction, Response } from "express";
 import type { RegisterUserRequest } from "../types/index.ts";
 
+import db from "../db/client.ts";
 import { Config } from "../config/index.ts";
+import { refreshTokenTable } from "../db/index.ts";
 import { UserService } from "../services/UserService.ts";
 
 export class AuthController {
@@ -36,6 +38,10 @@ export class AuthController {
         password,
       });
 
+      if (!data) {
+        throw createHttpError(500, "User creation failed");
+      }
+
       const payload: JwtPayload = {
         sub: String(data?.userId),
         role: data?.role,
@@ -44,7 +50,7 @@ export class AuthController {
       let privateKey: Buffer;
       try {
         privateKey = fs.readFileSync(
-          path.join(__dirname, "../../certs/private.pem"),
+          path.join(process.cwd(), "certs/private.pem"),
         );
         //eslint-disable-next-line  @typescript-eslint/no-unused-vars
       } catch (err) {
@@ -58,10 +64,31 @@ export class AuthController {
         expiresIn: "1h",
         issuer: "auth-service",
       });
+
+      //Persist the refresh token
+      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
+      let newRefreshToken;
+      try {
+        newRefreshToken = await db
+          .insert(refreshTokenTable)
+          .values({
+            userId: data.userId,
+            expiresAt: new Date(Date.now() + MS_IN_YEAR),
+          })
+          .returning({
+            refreshTokenId: refreshTokenTable.id,
+          });
+      } catch (err) {
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const error = createHttpError(500, (err as any).cause?.detail);
+        throw error;
+      }
+
       const refreshToken = jwt.sign(payload, Config.REFRESH_TOKEN_SECRET!, {
         algorithm: "HS256",
         expiresIn: "1y",
         issuer: "auth-service",
+        jwtid: String(newRefreshToken[0]?.refreshTokenId),
       });
 
       res.cookie("accessToken", accessToken, {

@@ -5,7 +5,7 @@ import app from "../../src/app";
 import db from "../../src/db/client";
 import { Roles } from "../../src/constants";
 import { isJwt } from "../../src/utils/index";
-import { usersTable } from "../../src/db/index";
+import { usersTable, refreshTokenTable } from "../../src/db/index";
 
 interface UserData {
   firstName: string;
@@ -109,12 +109,12 @@ describe("POST /auth/register", () => {
     });
 
     //Tokens are not working inside test conditions
-    it.skip("should return the access token and refresh token inside a cookie", async () => {
+    it("should return the access token and refresh token inside a cookie", async () => {
       // Arrange
       const userData: UserData = {
-        firstName: "John",
-        lastName: "Dev",
-        email: "johndev@gmail.com",
+        firstName: "Jhonny",
+        lastName: "Lever",
+        email: "jhonnylever@gmail.com",
         role: "customer",
         password: "123456789",
       };
@@ -141,6 +141,26 @@ describe("POST /auth/register", () => {
 
       expect(isJwt(accessToken)).toBeTruthy();
       expect(isJwt(refreshToken)).toBeTruthy();
+    });
+
+    it("should store the refresh token in the database", async () => {
+      // Arrange
+      const userData: UserData = {
+        firstName: "Sahdev",
+        lastName: "Pandav",
+        email: "sahdevpandav@gmail.com",
+        role: "customer",
+        password: "123456789",
+      };
+      // Act
+      const userRes = await request(app).post("/auth/register").send(userData);
+
+      // Assert
+      const refreshTokens = await db
+        .select()
+        .from(refreshTokenTable)
+        .where(eq(refreshTokenTable.userId, userRes.body.userId));
+      expect(refreshTokens).toHaveLength(1);
     });
   });
 
