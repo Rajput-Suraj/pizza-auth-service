@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
-import jwt from "jsonwebtoken";
 import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
 
@@ -8,16 +5,18 @@ import type { JwtPayload } from "jsonwebtoken";
 import type { NextFunction, Response } from "express";
 import type { RegisterUserRequest } from "../types/index.ts";
 
-import db from "../db/client.ts";
-import { Config } from "../config/index.ts";
-import { refreshTokenTable } from "../db/index.ts";
 import { UserService } from "../services/UserService.ts";
+import { TokenService } from "../services/TokenService.ts";
 
 export class AuthController {
   userService: UserService;
 
-  constructor(userService: UserService) {
+  constructor(
+    userService: UserService,
+    private tokenService: TokenService,
+  ) {
     this.userService = userService;
+    this.tokenService = tokenService;
   }
 
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
@@ -47,48 +46,16 @@ export class AuthController {
         role: data?.role,
       };
 
-      let privateKey: Buffer;
-      try {
-        privateKey = fs.readFileSync(
-          path.join(process.cwd(), "certs/private.pem"),
-        );
-        //eslint-disable-next-line  @typescript-eslint/no-unused-vars
-      } catch (err) {
-        const error = createHttpError(500, "Error while reading private key");
-        next(error);
-        return;
-      }
-
-      const accessToken = jwt.sign(payload, privateKey, {
-        algorithm: "RS256",
-        expiresIn: "1h",
-        issuer: "auth-service",
-      });
+      const accessToken = this.tokenService.generateAccessToken(payload);
 
       //Persist the refresh token
-      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
-      let newRefreshToken;
-      try {
-        newRefreshToken = await db
-          .insert(refreshTokenTable)
-          .values({
-            userId: data.userId,
-            expiresAt: new Date(Date.now() + MS_IN_YEAR),
-          })
-          .returning({
-            refreshTokenId: refreshTokenTable.id,
-          });
-      } catch (err) {
-        //eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const error = createHttpError(500, (err as any).cause?.detail);
-        throw error;
-      }
+      const newRefreshToken = await this.tokenService.persistRefreshToken({
+        userId: data.userId,
+      });
 
-      const refreshToken = jwt.sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-        algorithm: "HS256",
-        expiresIn: "1y",
-        issuer: "auth-service",
-        jwtid: String(newRefreshToken[0]?.refreshTokenId),
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        refreshTokenId: newRefreshToken?.refreshTokenId,
       });
 
       res.cookie("accessToken", accessToken, {

@@ -108,13 +108,12 @@ describe("POST /auth/register", () => {
       expect(res.statusCode).toBe(400);
     });
 
-    //Tokens are not working inside test conditions
     it("should return the access token and refresh token inside a cookie", async () => {
       // Arrange
       const userData: UserData = {
-        firstName: "Jhonny",
-        lastName: "Lever",
-        email: "jhonnylever@gmail.com",
+        firstName: "Ferb",
+        lastName: "",
+        email: "ferb1996@gmail.com",
         role: "customer",
         password: "123456789",
       };
@@ -125,7 +124,7 @@ describe("POST /auth/register", () => {
       let refreshToken: string | null = null;
       const cookies: string[] =
         (res.headers["set-cookie"] as unknown as string[]) || [];
-      console.log("COOk", cookies);
+
       cookies.forEach((cookie) => {
         if (cookie.startsWith("accessToken=")) {
           accessToken = cookie.split(";")[0].split("=")[1];
@@ -146,9 +145,9 @@ describe("POST /auth/register", () => {
     it("should store the refresh token in the database", async () => {
       // Arrange
       const userData: UserData = {
-        firstName: "Sahdev",
-        lastName: "Pandav",
-        email: "sahdevpandav@gmail.com",
+        firstName: "Phines",
+        lastName: "",
+        email: "phines@gmail.com",
         role: "customer",
         password: "123456789",
       };
