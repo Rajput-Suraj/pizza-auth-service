@@ -7,6 +7,7 @@ const {
   POSTGRES_USER,
   POSTGRES_PASSWORD,
   DATABASE_URL,
+  REFRESH_TOKEN_SECRET,
 } = process.env;
 
 export const Config = {
@@ -16,4 +17,5 @@ export const Config = {
   POSTGRES_USER,
   POSTGRES_PASSWORD,
   DATABASE_URL,
+  REFRESH_TOKEN_SECRET,
 };

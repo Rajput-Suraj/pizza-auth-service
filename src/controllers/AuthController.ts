@@ -8,6 +8,7 @@ import type { JwtPayload } from "jsonwebtoken";
 import type { NextFunction, Response } from "express";
 import type { RegisterUserRequest } from "../types/index.ts";
 
+import { Config } from "../config/index.ts";
 import { UserService } from "../services/UserService.ts";
 
 export class AuthController {
@@ -57,7 +58,11 @@ export class AuthController {
         expiresIn: "1h",
         issuer: "auth-service",
       });
-      const refreshToken = "refreshToken=";
+      const refreshToken = jwt.sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+        algorithm: "HS256",
+        expiresIn: "1y",
+        issuer: "auth-service",
+      });
 
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
