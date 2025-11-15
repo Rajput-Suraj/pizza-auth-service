@@ -4,6 +4,7 @@ import type { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService.ts";
 import { TokenService } from "../services/TokenService.ts";
 import { AuthController } from "../controllers/AuthController.ts";
+import loginValidator from "../validators/login-validator.ts";
 import registerValidator from "../validators/register-validator.ts";
 
 const router = express();
@@ -16,6 +17,13 @@ router.post(
   registerValidator,
   (req: Request, res: Response, next: NextFunction) =>
     authController.register(req, res, next),
+);
+
+router.post(
+  "/login",
+  loginValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.login(req, res, next),
 );
 
 export default router;

@@ -44,4 +44,15 @@ export class UserService {
       throw error;
     }
   }
+
+  async findByEmail(email: string) {
+    return await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
+  }
+
+  async comparePassword(userPassword: string, hasedPassword: string) {
+    return await bcrypt.compare(userPassword, hasedPassword);
+  }
 }
