@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 
 import type { JwtPayload } from "jsonwebtoken";
 import type { NextFunction, Response } from "express";
-import type { RegisterUserRequest } from "../types/index.ts";
+import type { AuthRequest, RegisterUserRequest } from "../types/index.ts";
 
 import { UserService } from "../services/UserService.ts";
 import { TokenService } from "../services/TokenService.ts";
@@ -146,5 +146,10 @@ export class AuthController {
     } catch (err) {
       next(err);
     }
+  }
+
+  async self(req: AuthRequest, res: Response) {
+    const [user] = await this.userService.findById(req.auth.id);
+    res.json(user);
   }
 }

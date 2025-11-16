@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import type { HttpError } from "http-errors";
 import type { Request, Response, NextFunction } from "express";
 
@@ -6,6 +7,7 @@ import logger from "./config/logger.ts";
 import authRouter from "./routes/auth.ts";
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json());
 
 app.get("/", (req, res) => {

@@ -55,4 +55,8 @@ export class UserService {
   async comparePassword(userPassword: string, hasedPassword: string) {
     return await bcrypt.compare(userPassword, hasedPassword);
   }
+
+  async findById(id: number) {
+    return await db.select().from(usersTable).where(eq(usersTable.id, id));
+  }
 }

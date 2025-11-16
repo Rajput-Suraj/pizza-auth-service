@@ -8,6 +8,7 @@ const {
   POSTGRES_PASSWORD,
   DATABASE_URL,
   REFRESH_TOKEN_SECRET,
+  JWKS_URI,
 } = process.env;
 
 export const Config = {
@@ -18,4 +19,5 @@ export const Config = {
   POSTGRES_PASSWORD,
   DATABASE_URL,
   REFRESH_TOKEN_SECRET,
+  JWKS_URI,
 };
