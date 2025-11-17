@@ -1,15 +1,15 @@
 import type { Request } from "express";
 import { expressjwt } from "express-jwt";
-import jwksClient, { type GetVerificationKey } from "jwks-rsa";
+import jwksRsa from "jwks-rsa";
 
 import { Config } from "../config/index.ts";
 
 export default expressjwt({
-  secret: jwksClient({
+  secret: jwksRsa.expressJwtSecret({
     jwksUri: Config.JWKS_URI!,
     cache: true,
     rateLimit: true,
-  }) as unknown as GetVerificationKey,
+  }),
   algorithms: ["RS256"],
   getToken(req: Request) {
     const authHeader = req.headers.authorization;
