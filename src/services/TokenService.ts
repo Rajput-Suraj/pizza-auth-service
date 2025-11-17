@@ -3,8 +3,10 @@ import path from "node:path";
 import jwt from "jsonwebtoken";
 import createHttpError from "http-errors";
 
-import db from "../db/client.ts";
+import { eq } from "drizzle-orm";
 import type { JwtPayload } from "jsonwebtoken";
+
+import db from "../db/client.ts";
 import { Config } from "../config/index.ts";
 import { refreshTokenTable } from "../db/index.ts";
 
@@ -61,5 +63,11 @@ export class TokenService {
     }
 
     return newRefreshToken[0];
+  }
+
+  async deleteRefreshToken(tokenId: number) {
+    return await db
+      .delete(refreshTokenTable)
+      .where(eq(refreshTokenTable.id, tokenId));
   }
 }

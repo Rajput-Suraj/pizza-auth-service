@@ -16,5 +16,15 @@ export interface AuthRequest extends Request {
   auth: {
     sub: number;
     role: string;
+    refreshTokenId?: string;
   };
+}
+
+export type AuthCookie = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+export interface IRefreshTokenPayload {
+  refreshTokenId: string;
 }

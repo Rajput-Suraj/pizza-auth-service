@@ -8,6 +8,7 @@ import { AuthController } from "../controllers/AuthController.ts";
 import authenticate from "../middlewares/authenticate.ts";
 import loginValidator from "../validators/login-validator.ts";
 import registerValidator from "../validators/register-validator.ts";
+import validateRefreshToken from "../middlewares/validateRefreshToken.ts";
 
 const router = express();
 const userService = new UserService();
@@ -30,6 +31,13 @@ router.post(
 
 router.get("/self", authenticate, (req: Request, res: Response) =>
   authController.self(req as AuthRequest, res),
+);
+
+router.post(
+  "/refresh",
+  validateRefreshToken,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.refresh(req as AuthRequest, res, next),
 );
 
 export default router;

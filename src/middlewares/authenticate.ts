@@ -3,6 +3,7 @@ import { expressjwt } from "express-jwt";
 import jwksRsa from "jwks-rsa";
 
 import { Config } from "../config/index.ts";
+import type { AuthCookie } from "../types/index.ts";
 
 export default expressjwt({
   secret: jwksRsa.expressJwtSecret({
@@ -19,10 +20,6 @@ export default expressjwt({
         return token;
       }
     }
-
-    type AuthCookie = {
-      accessToken: string;
-    };
 
     const { accessToken } = req.cookies as AuthCookie;
     return accessToken;
