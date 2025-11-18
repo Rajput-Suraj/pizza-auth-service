@@ -167,4 +167,20 @@ export class AuthController {
       return;
     }
   }
+
+  async logout(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      await this.tokenService.deleteRefreshToken(
+        Number(req.auth.refreshTokenId),
+      );
+
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+
+      res.json({ message: "User logged out" });
+    } catch (err) {
+      next(err);
+      return;
+    }
+  }
 }
