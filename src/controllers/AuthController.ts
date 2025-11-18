@@ -17,6 +17,41 @@ export class AuthController {
     this.tokenService = tokenService;
   }
 
+  async tokenGeneration(res: Response, userObj: JwtPayload) {
+    const { id, role } = userObj;
+
+    const payload: JwtPayload = {
+      sub: String(id),
+      role: role,
+    };
+
+    const accessToken = this.tokenService.generateAccessToken(payload);
+
+    //Persist the refresh token
+    const newRefreshToken = await this.tokenService.persistRefreshToken({
+      userId: Number(id),
+    });
+
+    const refreshToken = this.tokenService.generateRefreshToken({
+      ...payload,
+      refreshTokenId: newRefreshToken?.refreshTokenId,
+    });
+
+    res.cookie("accessToken", accessToken, {
+      domain: "localhost",
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60, // 1 hour
+      httpOnly: true,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      domain: "localhost",
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+      httpOnly: true,
+    });
+  }
+
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
     //Validation
     const result = validationResult(req);
@@ -39,35 +74,9 @@ export class AuthController {
         throw createHttpError(500, "User creation failed");
       }
 
-      const payload: JwtPayload = {
-        sub: String(data?.userId),
+      await this.tokenGeneration(res, {
+        id: String(data?.userId),
         role: data?.role,
-      };
-
-      const accessToken = this.tokenService.generateAccessToken(payload);
-
-      //Persist the refresh token
-      const newRefreshToken = await this.tokenService.persistRefreshToken({
-        userId: data.userId,
-      });
-
-      const refreshToken = this.tokenService.generateRefreshToken({
-        ...payload,
-        refreshTokenId: newRefreshToken?.refreshTokenId,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60, // 1 hour
-        httpOnly: true,
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
-        httpOnly: true,
       });
 
       res.status(201).json({
@@ -109,35 +118,9 @@ export class AuthController {
         return;
       }
 
-      const payload: JwtPayload = {
-        sub: String(user.id),
+      await this.tokenGeneration(res, {
+        id: user.id,
         role: user.role,
-      };
-
-      const accessToken = this.tokenService.generateAccessToken(payload);
-
-      // //Persist the refresh token
-      const newRefreshToken = await this.tokenService.persistRefreshToken({
-        userId: user.id,
-      });
-
-      const refreshToken = this.tokenService.generateRefreshToken({
-        ...payload,
-        refreshTokenId: newRefreshToken?.refreshTokenId,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60, // 1 hour
-        httpOnly: true,
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
-        httpOnly: true,
       });
 
       res.status(200).json({
@@ -155,13 +138,6 @@ export class AuthController {
 
   async refresh(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const payload: JwtPayload = {
-        sub: String(req.auth.sub),
-        role: req.auth.role,
-      };
-
-      const accessToken = this.tokenService.generateAccessToken(payload);
-
       const [user] = await this.userService.findById(req.auth.sub);
 
       if (!user) {
@@ -173,34 +149,15 @@ export class AuthController {
         return;
       }
 
-      //Persist the refresh token
-      const newRefreshToken = await this.tokenService.persistRefreshToken({
-        userId: user.id,
+      await this.tokenGeneration(res, {
+        id: user.id,
+        role: user.role,
       });
 
       //Delete old refresh token
       await this.tokenService.deleteRefreshToken(
         Number(req.auth.refreshTokenId),
       );
-
-      const refreshToken = this.tokenService.generateRefreshToken({
-        ...payload,
-        refreshTokenId: newRefreshToken?.refreshTokenId,
-      });
-
-      res.cookie("accessToken", accessToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60, // 1 hour
-        httpOnly: true,
-      });
-
-      res.cookie("refreshToken", refreshToken, {
-        domain: "localhost",
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
-        httpOnly: true,
-      });
 
       res.status(201).json({
         userId: req.auth.sub,
