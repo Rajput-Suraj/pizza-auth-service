@@ -63,6 +63,13 @@
       "when": 1763517859743,
       "tag": "0008_conscious_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1763518293567,
+      "tag": "0009_cheerful_angel",
+      "breakpoints": true
     }
   ]
 }

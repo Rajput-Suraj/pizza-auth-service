@@ -10,7 +10,5 @@ export const usersTable = pgTable("users", {
   role: varchar("role", { length: 50 }),
   password: varchar({ length: 255 }).notNull().default(""),
   created_at: timestamp("created_at").defaultNow().notNull(),
-  tenant: integer()
-    .notNull()
-    .references(() => tenants.id, { onDelete: "cascade" }),
+  tenant: integer().references(() => tenants.id, { onDelete: "cascade" }),
 });
