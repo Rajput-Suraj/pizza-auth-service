@@ -28,3 +28,8 @@ export type AuthCookie = {
 export interface IRefreshTokenPayload {
   refreshTokenId: string;
 }
+
+export interface ITenant {
+  name: string;
+  address: string;
+}

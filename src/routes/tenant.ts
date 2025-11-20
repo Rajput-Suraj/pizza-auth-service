@@ -1,10 +1,16 @@
 import express from "express";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import logger from "../config/logger.ts";
+import { TenantService } from "../services/TenantService.ts";
+import { TenantController } from "../controllers/TenantController.ts";
 
 const router = express.Router();
+const tenantService = new TenantService();
+const tenantController = new TenantController(tenantService, logger);
 
-router.post("/", (req: Request, res: Response) => {
-  res.status(201).json({ message: "Tenant created" });
-});
+router.post("/", (req: Request, res: Response, next: NextFunction) =>
+  tenantController.create(req, res, next),
+);
 
 export default router;
