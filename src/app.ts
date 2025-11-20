@@ -5,6 +5,7 @@ import type { Request, Response, NextFunction } from "express";
 
 import logger from "./config/logger.ts";
 import authRouter from "./routes/auth.ts";
+import tenantRouter from "./routes/tenant.ts";
 
 const app = express();
 app.use(express.static("public", { dotfiles: "allow" }));
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/tenants", tenantRouter);
 
 //Global error handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
