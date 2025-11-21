@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import createHttpError from "http-errors";
 
 import db from "../db/client.ts";
@@ -17,6 +18,18 @@ export class TenantService {
         .returning({
           id: tenants.id,
         });
+
+      return result[0];
+    } catch (err) {
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = createHttpError(500, (err as any).cause?.detail);
+      throw error;
+    }
+  }
+
+  async getTenantById(id: number) {
+    try {
+      const result = await db.select().from(tenants).where(eq(tenants.id, id));
 
       return result[0];
     } catch (err) {

@@ -23,4 +23,16 @@ export class TenantController {
       next(err);
     }
   }
+
+  async findById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tenant = await this.tenantService.getTenantById(
+        Number(req.params.id),
+      );
+
+      res.status(200).json({ tenant });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
