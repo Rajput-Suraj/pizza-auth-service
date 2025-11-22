@@ -38,4 +38,16 @@ export class TenantService {
       throw error;
     }
   }
+
+  async getAllTenants() {
+    try {
+      const result = await db.select().from(tenants);
+
+      return result;
+    } catch (err) {
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = createHttpError(500, (err as any).cause?.detail);
+      throw error;
+    }
+  }
 }

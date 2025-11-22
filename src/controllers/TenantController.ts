@@ -35,4 +35,14 @@ export class TenantController {
       next(err);
     }
   }
+
+  async getAllTenants(req: Request, res: Response, next: NextFunction) {
+    try {
+      const tenants = await this.tenantService.getAllTenants();
+
+      res.status(200).json({ tenants });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
