@@ -45,4 +45,16 @@ export class TenantController {
       next(err);
     }
   }
+
+  async deleteTenantById(req: Request, res: Response, next: NextFunction) {
+    try {
+      await this.tenantService.deleteTenantById(Number(req.params.id));
+
+      res.status(200).json({
+        message: `Tenant with id ${req.params.id} is deleted successfully`,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

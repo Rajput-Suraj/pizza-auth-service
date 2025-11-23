@@ -36,4 +36,8 @@ router.get(
     tenantController.getAllTenants(req, res, next),
 );
 
+router.delete("/:id", (req: Request, res: Response, next: NextFunction) =>
+  tenantController.deleteTenantById(req, res, next),
+);
+
 export default router;
