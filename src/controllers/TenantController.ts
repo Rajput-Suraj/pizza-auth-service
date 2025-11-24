@@ -1,4 +1,5 @@
 import { Logger } from "winston";
+import { validationResult } from "express-validator";
 import type { NextFunction, Request, Response } from "express";
 
 import { TenantService } from "../services/TenantService.ts";
@@ -14,6 +15,12 @@ export class TenantController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     this.logger.debug("Request for creating a tenant", req.body);
+    //Validation
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.status(400).json({ errors: result.array() });
+    }
+
     try {
       const tenant = await this.tenantService.create(req.body);
       this.logger.info("Tenant has been created", { id: tenant?.id });
