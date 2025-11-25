@@ -15,6 +15,7 @@ export class TenantController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     this.logger.debug("Request for creating a tenant", req.body);
+
     //Validation
     const result = validationResult(req);
     if (!result.isEmpty()) {

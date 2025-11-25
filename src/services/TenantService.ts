@@ -62,4 +62,6 @@ export class TenantService {
       throw error;
     }
   }
+
+  async updateTenant() {}
 }
