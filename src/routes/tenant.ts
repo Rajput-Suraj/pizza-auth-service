@@ -42,4 +42,8 @@ router.delete("/:id", (req: Request, res: Response, next: NextFunction) =>
   tenantController.deleteTenantById(req, res, next),
 );
 
+router.put("/:id", (req: Request, res: Response, next: NextFunction) =>
+  tenantController.updateTenantById(req, res, next),
+);
+
 export default router;

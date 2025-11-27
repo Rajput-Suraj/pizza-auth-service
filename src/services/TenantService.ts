@@ -63,7 +63,7 @@ export class TenantService {
     }
   }
 
-  async updateTenant(id: number, { name, address }: ITenant) {
+  async updateTenantById(id: number, { name, address }: ITenant) {
     try {
       const result = await db
         .update(tenants)

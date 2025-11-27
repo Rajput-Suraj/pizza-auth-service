@@ -65,4 +65,18 @@ export class TenantController {
       next(err);
     }
   }
+
+  async updateTenantById(req: Request, res: Response, next: NextFunction) {
+    try {
+      await this.tenantService.updateTenantById(Number(req.params.id), {
+        ...req.body,
+      });
+
+      res.status(200).json({
+        message: `Tenant with id ${req.params.id} is updated`,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
