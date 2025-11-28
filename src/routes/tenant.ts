@@ -38,12 +38,20 @@ router.get(
     tenantController.getAllTenants(req, res, next),
 );
 
-router.delete("/:id", (req: Request, res: Response, next: NextFunction) =>
-  tenantController.deleteTenantById(req, res, next),
+router.delete(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.deleteTenantById(req, res, next),
 );
 
-router.put("/:id", (req: Request, res: Response, next: NextFunction) =>
-  tenantController.updateTenantById(req, res, next),
+router.put(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.updateTenantById(req, res, next),
 );
 
 export default router;
