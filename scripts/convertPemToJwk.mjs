@@ -7,5 +7,3 @@ const privatekey = fs.readFileSync(
 );
 
 const jwk = rsaPemToJwk(privatekey, { use: "sig" }, "public");
-
-console.log(JSON.stringify(jwk));
